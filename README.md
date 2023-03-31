@@ -44,78 +44,133 @@ On the Basics tab of the Create Kubernetes cluster blade, specify the following 
 
 Note: In production scenarios, you would want to enable monitoring. Monitoring is disabled in this case since it is not covered in the lab.
 Note: Wait for the deployment to complete. This should take about 10 minutes.
+![image](https://user-images.githubusercontent.com/109476085/229250920-b89380a6-8886-41dd-8c36-3a6d2bedc032.png)
+![image](https://user-images.githubusercontent.com/109476085/229250940-e761f4a0-c339-446d-8b95-f17f6ca31d31.png)
+![image](https://user-images.githubusercontent.com/109476085/229251025-ca79221e-f4b5-4fae-965b-8f0b00b61e59.png)
+
 
 # Task 3: Deploy pods into the Azure Kubernetes Service cluster
 
 In this task, you will deploy a pod into the Azure Kubernetes Service cluster.
-On the deployment blade, click the Go to resource link.
-On the az104–9c-aks1 Kubernetes service blade, in the Settings section, click Node pools.
-On the az104–9c-aks1 - Node pools blade, verify that the cluster consists of a single pool with one node.
-In the Azure portal, open the Azure Cloud Shell by clicking on the icon in the top right of the Azure Portal.
-Switch the Azure Cloud Shell to Bash (black background).
-From the Cloud Shell pane, run the following to retrieve the credentials to access the AKS cluster:
+1.On the deployment blade, click the Go to resource link.
+2.On the az104–9c-aks1 Kubernetes service blade, in the Settings section, click Node pools.
+3.On the az104–9c-aks1 - Node pools blade, verify that the cluster consists of a single pool with one node.
+4.In the Azure portal, open the Azure Cloud Shell by clicking on the icon in the top right of the Azure Portal.
+5.Switch the Azure Cloud Shell to Bash (black background).
+6.From the Cloud Shell pane, run the following to retrieve the credentials to access the AKS cluster:
 
 RESOURCE_GROUP='az104-09c-rg1'
 
 AKS_CLUSTER='az104-9c-aks1'
 
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER
+
+
 7.From the Cloud Shell pane, run the following to verify connectivity to the AKS cluster:
+
 kubectl get nodes
+
+![image](https://user-images.githubusercontent.com/109476085/229251226-85b557c4-26da-4a49-bae5-a86321cb578f.png)
+
 8.In the Cloud Shell pane, review the output and verify that the one node which the cluster consists of at this point is reporting the Ready status.
 9.From the Cloud Shell pane, run the following to deploy the nginx image from the Docker Hub:
+
 kubectl create deployment nginx-deployment --image=nginx
-Note: Make sure to use lower case letters when typing the name of the deployment (nginx-deployment)10.From the Cloud Shell pane, run the following to verify that a Kubernetes pod has been created:
+
+![image](https://user-images.githubusercontent.com/109476085/229251243-b4c6d52f-9d22-417d-b777-b9c6fffd13bd.png)
+
+Note: Make sure to use lower case letters when typing the name of the deployment (nginx-deployment)
+10.From the Cloud Shell pane, run the following to verify that a Kubernetes pod has been created:
+
 kubectl get pods
+
+![image](https://user-images.githubusercontent.com/109476085/229251259-2afb6081-2685-4770-a2ba-aa6102731322.png)
+
 11.From the Cloud Shell pane, run the following to identify the state of the deployment:
+
 kubectl get deployment
+
+![image](https://user-images.githubusercontent.com/109476085/229251278-2884789f-b397-4f9c-86b2-0ede23bc89ac.png)
+
 12.From the Cloud Shell pane, run the following to make the pod available from Internet:
+
 kubectl expose deployment nginx-deployment --port=80 --type=LoadBalancer
+
 13.From the Cloud Shell pane, run the following to identify whether a public IP address has been provisioned:
+
 kubectl get service
 
-14.Re-run the command until the value in the EXTERNAL-IP column for the nginx-deployment entry changes from <pending> to a public IP address. Note the public IP address in the EXTERNAL-IP column for nginx-deployment.
+![image](https://user-images.githubusercontent.com/109476085/229251304-cc6230fe-60bc-419c-b90c-c79cc4caf778.png)
+
+
+14.Re-run the command until the value in the EXTERNAL-IP column for the nginx-deployment entry changes from <pending> to a public IP address.
+Note the public IP address in the EXTERNAL-IP column for nginx-deployment.
+
 15.Open a browser window and navigate to the IP address you obtained in the previous step. Verify that the browser page displays the Welcome to nginx! message.
 
-  
- # Task 4: Scale containerized workloads in the Azure Kubernetes service cluster
+![image](https://user-images.githubusercontent.com/109476085/229251380-82f47698-7b0f-408a-91c1-03cbdac55e82.png)
+
+ # Task 4: Scale containerized workloads in the Azure Kubernetes service cluster
 In this task, you will scale horizontally the number of pods and then number of cluster nodes.
 
-From the Cloud Shell pane, and run the following to scale the deployment by increasing of the number of pods to 2:
+1.From the Cloud Shell pane, and run the following to scale the deployment by increasing of the number of pods to 2:
 
 kubectl scale --replicas=2 deployment/nginx-deployment
+
 2.From the Cloud Shell pane, run the following to verify the outcome of scaling the deployment:
+
 kubectl get pods
-Note: Review the output of the command and verify that the number of pods increased to 2.3.From the Cloud Shell pane, run the following to scale out the cluster by increasing the number of nodes to 2:
+
+![image](https://user-images.githubusercontent.com/109476085/229251471-c329dbea-eedd-4f37-9e09-0f99c16c187d.png)
+
+
+Note: Review the output of the command and verify that the number of pods increased to 2.
+
+3.From the Cloud Shell pane, run the following to scale out the cluster by increasing the number of nodes to 2:
+
 RESOURCE_GROUP='az104-09c-rg1'
 
 AKS_CLUSTER='az104-9c-aks1'
 
 az aks scale --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER --node-count 2
+
 Note: Wait for the provisioning of the additional node to complete. This might take about 3 minutes. If it fails, rerun the az aks scale command.
-if you get an error please click link contact Azure support team to increase the resource quota 4.From the Cloud Shell pane, run the following to verify the outcome of scaling the cluster:
+if you get an error please click link contact Azure support team to increase the resource quota 
+
+ 4.From the Cloud Shell pane, run the following to verify the outcome of scaling the cluster:
+
 kubectl get nodesNote: Review the output of the command and verify that the number of nodes increased to 2.
 Note: Review the output of the command and verify that the number of nodes increased to 2.
 
   5.From the Cloud Shell pane, run the following to scale the deployment:
+	
 kubectl scale --replicas=10 deployment/nginx-deployment
 
   6.From the Cloud Shell pane, run the following to verify the outcome of scaling the deployment:
+	
 kubectl get pods
+
+![image](https://user-images.githubusercontent.com/109476085/229251942-19ffd44a-f0e2-4d23-bdef-8dfc6b144885.png)
+
+
 Note: Review the output of the command and verify that the number of pods increased to 10.
 
  7.From the Cloud Shell pane, run the following to review the pods distribution across cluster nodes:
 
   kubectl get pod -o=custom-columns=NODE:.spec.nodeName,POD:.metadata.name
+	
 Note: Review the output of the command and verify that the pods are distributed across both nodes.
 8.From the Cloud Shell pane, run the following to delete the deployment:
 
   kubectl delete deployment nginx-deployment
 
-  List all resource groups created throughout the labs of this module by running the following command:
+List all resource groups created throughout the labs of this module by running the following command:
+
 az group list --query "[?starts_with(name,'az104-09c')].name" --output tsv
 
-  Delete all resource groups you created throughout the labs of this module by running the following command:
+  
+Delete all resource groups you created throughout the labs of this module by running the following command:
+
 az group list --query "[?starts_with(name,'az104-09c')].[name]" --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
 
-  Note: The command executes asynchronously (as determined by the - nowait parameter), so while you will be able to run another Azure CLI command immediately afterwards within the same Bash session, it will take a few minutes before the resource groups are actually removed
+Note: The command executes asynchronously (as determined by the - nowait parameter), so while you will be able to run another Azure CLI command immediately afterwards within the same Bash session, it will take a few minutes before the resource groups are actually removed
